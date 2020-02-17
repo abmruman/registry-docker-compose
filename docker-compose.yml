@@ -1,0 +1,31 @@
+version: "3.5"
+
+services:
+  service:
+    # image: ${IMAGE}:${TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - TAG=${TAG}
+        - IMAGE=${IMAGE}
+    entrypoint: ["sh", "-c"]
+    command:
+      - echo "I'm up!"
+      # - ping localhost
+    # tty: true
+    # environment:
+    #   - ${EXAMPLE_ENV}=${EXAMPLE_ENV}
+    # ports:
+    #   - "443:443"
+    networks:
+      - net
+    # volumes:
+    #   - "${EXAMPLE_VOLUME}:/example"
+    #   - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    # labels:
+    #   example.label: "value"
+networks:
+  net:
+    name: ${NETWORK}
+    external: ${NETWORK_EXTERNAL}
