@@ -13,8 +13,7 @@ before_install:
   - docker-compose version
 
 script:
-  - make
-  - make up
+  - make install
   - ./scripts/wait.sh
   - docker-compose logs
   - make test

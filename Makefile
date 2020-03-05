@@ -6,6 +6,8 @@ init: env.example
 build: .env
 	./scripts/build.sh
 
+install: init build up
+
 up: .env
 	./scripts/up.sh
 
