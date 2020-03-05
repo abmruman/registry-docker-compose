@@ -9,6 +9,9 @@ build: .env
 up: .env
 	./scripts/up.sh
 
+test: .env
+	./scripts/test.sh
+
 down: .env
 	./scripts/down.sh
 

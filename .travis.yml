@@ -17,6 +17,7 @@ script:
   - make up
   - ./scripts/wait.sh
   - docker-compose logs
+  - make test
   - make down
   - echo -e "yes\nyes\nyes" | make clean
 

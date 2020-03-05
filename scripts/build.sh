@@ -8,4 +8,3 @@ set -ev
 
 docker-compose config
 docker-compose pull
-docker-compose build --no-cache
