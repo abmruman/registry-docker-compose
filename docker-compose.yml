@@ -1,30 +1,18 @@
 version: "3.5"
 
 services:
-  service:
-    # image: ${IMAGE}:${TAG}
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - TAG=${TAG}
-        - IMAGE=${IMAGE}
-    entrypoint: ["sh", "-c"]
-    command:
-      - echo "I'm up!"
-      # - ping localhost
-    # tty: true
-    # environment:
-    #   - ${EXAMPLE_ENV}=${EXAMPLE_ENV}
-    # ports:
-    #   - "443:443"
+  registry:
+    image: registry:2
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      REGISTRY_HTTP_ADDR: 0.0.0.0:5000
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+    volumes:
+      - ./data:/data
     networks:
       - net
-    # volumes:
-    #   - "${EXAMPLE_VOLUME}:/example"
-    #   - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    # labels:
-    #   example.label: "value"
 networks:
   net:
     name: ${NETWORK}
