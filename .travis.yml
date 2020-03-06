@@ -1,3 +1,8 @@
+addons:
+  hosts:
+    - traefik.test
+    - registry.traefik.test
+
 language: bash
 
 dist: xenial
@@ -11,16 +16,22 @@ stages:
 before_install:
   - docker version
   - docker-compose version
+  - git clone https://github.com/abmruman/traefik-docker-compose.git traefik
+  - cd traefik && ./scripts/travis.sh
+  - cd ..
 
 script:
   - make install
   - ./scripts/wait.sh
   - docker-compose logs
   - make test
-  - make down
-  - echo -e "yes\nyes\nyes" | make clean
 
 after_failure:
   - docker-compose config
   - docker-compose ps
   - docker-compose logs
+
+after_script:
+  - make down
+  - echo -e "yes\nyes\nyes" | make clean
+  - rm -rf traefik

@@ -4,8 +4,8 @@ services:
   registry:
     image: registry:2
     restart: always
-    ports:
-      - "5000:5000"
+    # ports:
+    #   - "5000:5000"
     environment:
       REGISTRY_HTTP_ADDR: 0.0.0.0:5000
       REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
@@ -13,6 +13,13 @@ services:
       - ./data:/data
     networks:
       - net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.registry.rule=Host(`${HOST}`)"
+      - "traefik.http.routers.registry.service=registry"
+      - "traefik.http.services.registry.loadbalancer.server.port=5000"
+      - "traefik.http.routers.registry.entrypoints=websecure"
+      - "traefik.http.routers.registry.tls.certresolver=le"
 networks:
   net:
     name: ${NETWORK}
