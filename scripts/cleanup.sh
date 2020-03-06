@@ -20,23 +20,27 @@ echo
 read -p "Volumes: " -r ANSWER
 echo
 if [[ "$ANSWER" =~ ^[Yy][Ee]?[Ss]?$ ]] ; then
-  echo -n "Removing Volumes: "
-  docker-compose down -v
+  echo -n "Removing Volumes..."
+  docker-compose down -v >/dev/null 2>&1
 else
   echo "skipping volumes..."
 fi
 echo
 
-if [[ ! -z "$NETWORK" ]] && [[ $(docker network ls | grep "$NETWORK") ]] ; then
-  read -p "Network ("$NETWORK"): " -r ANSWER
+## If network is not external, there in no need for this block.
+## Because, docker-compose down will remove all internal networks by default.
+if [[ ! -z "$NETWORK_EXTERNAL" ]] && [[ "$NETWORK_EXTERNAL" = true ]] ; then
+  if [[ ! -z "$NETWORK" ]] && [[ $(docker network ls | grep "$NETWORK") ]] ; then
+    read -p "Network ("$NETWORK"): " -r ANSWER
+    echo
+    if [[ "$ANSWER" =~ ^[Yy][Ee]?[Ss]?$ ]] ; then
+      echo -n "Removing Network: "$NETWORK""
+      docker network ls | grep "$NETWORK" && docker network rm "$NETWORK" | echo
+    else
+      echo "skipping network..."
+    fi
   echo
-  if [[ "$ANSWER" =~ ^[Yy][Ee]?[Ss]?$ ]] ; then
-    echo -n "Removing Network: "$NETWORK""
-    docker network ls | grep "$NETWORK" && docker network rm "$NETWORK" | echo
-  else
-    echo "skipping network..."
   fi
-echo
 fi
 
 read -p ".env file: " -r ANSWER

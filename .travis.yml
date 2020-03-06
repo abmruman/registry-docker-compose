@@ -33,5 +33,8 @@ after_failure:
 
 after_script:
   - make down
+  - cd traefik
+  - ./scripts/cleanup.sh
+  - cd ..
   - echo -e "yes\nyes\nyes" | make clean
   - rm -rf traefik
