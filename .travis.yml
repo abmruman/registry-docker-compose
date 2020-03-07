@@ -14,14 +14,16 @@ stages:
   - test
 
 before_install:
+  - sudo apt-get install apache2-utils
   - docker version
   - docker-compose version
   - git clone https://github.com/abmruman/traefik-docker-compose.git traefik
-  - cd traefik && ./scripts/travis.sh
+  - cd traefik && pwd && ./scripts/travis.sh
   - cd ..
 
 script:
-  - make install
+  - make
+  - make up
   - ./scripts/wait.sh
   - docker-compose logs
   - make test

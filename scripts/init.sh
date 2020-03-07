@@ -18,6 +18,21 @@ fi
 
 echo
 
+eval $(egrep -m1 '^USERS_FILE=' .env | xargs)
+AUTH_FILE="auth/$USERS_FILE"
+# Create env from env.example if it doesn't exist
+if [ -f "$AUTH_FILE" ]
+then
+  echo -e "'$AUTH_FILE' file exists"
+  chmod 600 "$AUTH_FILE"
+else
+  echo -e "Creating '$AUTH_FILE' file"
+  touch "$AUTH_FILE"
+  chmod 600 "$AUTH_FILE"
+fi
+
+echo
+
 # Create network if necessary
 eval $(egrep -m1 '^NETWORK=' .env | xargs)
 eval $(egrep -m1 '^NETWORK_EXTERNAL=' .env | xargs)

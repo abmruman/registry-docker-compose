@@ -9,8 +9,12 @@ services:
     environment:
       REGISTRY_HTTP_ADDR: 0.0.0.0:5000
       REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/${USERS_FILE}
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
     volumes:
       - ./data:/data
+      - ./auth:/auth
     networks:
       - net
     labels:

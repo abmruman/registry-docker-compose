@@ -15,18 +15,22 @@ alias curlf="curl -ILsS -X GET"
 alias egrepc="egrep -o --color=auto"
 alias echoe=" echo -e"
 
-curl_test_200() {
-  checkmark="$GREEN\xE2\x9C\x94 $RESET"
-  crossmark="$RED\xE2\x9D\x8C $RESET"
-  pattern='HTTP/[0-9]([\.][0-9])? 200'
+CHECKMARK="$GREEN\xE2\x9C\x94 $RESET"
+CROSSMARK="$RED\xE2\x9D\x8C $RESET"
 
-  match=`curlf $1 | egrepc -c "$pattern"`
+curl_test_200() {
+  pattern='HTTP/[0-9]([\.][0-9])? 200'
+  if [ -z "$2" ] ; then
+    match=`curlf $1 | egrepc -c "$pattern"`
+  else
+    match=`curlf --anyauth -u $2 $1 | egrepc -c "$pattern"`
+  fi
 
   if [ "$match" -gt 0 ] ; then
-    echoe "$checkmark PASSED"
+    echoe "$CHECKMARK PASSED"
     status=0
   else
-    echoe "$crossmark FAILED"
+    echoe "$CROSSMARK FAILED"
     status=1
   fi
   echo
@@ -35,19 +39,31 @@ curl_test_200() {
 test_uri() {
   echo
   uri="$1"
+  auth="$2"
   echoe "${YELLOW}Testing URI:${RESET} $1"
 
-  curl_test_200 "$uri" || (echo $? >/dev/null)
+  curl_test_200 "$uri" "$auth" || (echo $? >/dev/null)
   [[ $status -gt 0 ]] && FAILED=1
-  curlf "$uri"
+
+  [[ -z "$auth" ]] && curlf "$uri" || curlf --anyauth -u "$auth" "$uri"
 }
 
 
 [[ -z "$HOST" ]] && eval $(egrep '^HOST' .env | xargs)
+[[ -z "$USERS_FILE" ]] && eval $(egrep '^USERS_FILE' .env | xargs)
+
+echo pass | htpasswd -iB auth/$USERS_FILE testuser
 
 test_uri "$HOST"
-test_uri "$HOST/v2"
-test_uri "$HOST/v2/_catalog"
+test_uri "$HOST/v2" "testuser:pass"
+test_uri "$HOST/v2/_catalog" "testuser:pass"
 
+htpasswd -D auth/$USERS_FILE testuser
+echo
+echo
+
+[[ "$FAILED" = 0 ]] \
+  && echoe "$CHECKMARK$CHECKMARK$GREEN ALL TESTS PASSED$RESET" \
+  || echoe "$CROSSMARK$CROSSMARK$RED TEST(S) FAILD$RESET"
 
 exit $FAILED

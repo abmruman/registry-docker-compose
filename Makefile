@@ -1,4 +1,4 @@
-targets: init build
+targets: install init build
 
 init: env.example
 	./scripts/init.sh
@@ -6,9 +6,10 @@ init: env.example
 build: .env
 	./scripts/build.sh
 
-install: init build up
+install:
+	./scripts/install.sh
 
-up: .env
+up: .env auth/*.password
 	./scripts/up.sh
 
 test: .env
