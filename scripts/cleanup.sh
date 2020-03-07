@@ -11,8 +11,8 @@ set -e
 ./scripts/down.sh
 echo
 
-eval $(egrep '^NETWORK' .env | xargs)
-eval $(egrep '^NETWORK_EXTERNAL' .env | xargs)
+eval $(egrep -m1 '^NETWORK=' .env | xargs)
+eval $(egrep -m1 '^NETWORK_EXTERNAL=' .env | xargs)
 
 echo "Are you sure, you want to remove these? (This process is irreversible) [y]es/[n]o"
 echo

@@ -19,8 +19,8 @@ fi
 echo
 
 # Create network if necessary
-eval $(egrep '^NETWORK' .env | xargs)
-eval $(egrep '^NETWORK_EXTERNAL' .env | xargs)
+eval $(egrep -m1 '^NETWORK=' .env | xargs)
+eval $(egrep -m1 '^NETWORK_EXTERNAL=' .env | xargs)
 
 echo -e "NETWORK: $NETWORK"
 echo -e "NETWORK_EXTERNAL: $NETWORK_EXTERNAL"
